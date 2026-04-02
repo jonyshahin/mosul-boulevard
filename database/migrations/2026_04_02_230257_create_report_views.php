@@ -11,7 +11,7 @@ return new class extends Migration
     public function up(): void
     {
         DB::statement('
-            CREATE VIEW vw_villas_sales_summary AS
+            CREATE OR REPLACE VIEW vw_villas_sales_summary AS
             SELECT vt.id as villa_type_id, vt.name as villa_type_name,
                 SUM(CASE WHEN v.is_sold = 1 THEN 1 ELSE 0 END) as total_sold,
                 SUM(CASE WHEN v.is_sold = 0 THEN 1 ELSE 0 END) as total_unsold,
@@ -23,7 +23,7 @@ return new class extends Migration
         ');
 
         DB::statement('
-            CREATE VIEW vw_towers_sales_summary AS
+            CREATE OR REPLACE VIEW vw_towers_sales_summary AS
             SELECT td.id as tower_definition_id, td.name as tower_name,
                 SUM(CASE WHEN tu.is_sold = 1 THEN 1 ELSE 0 END) as total_sold,
                 SUM(CASE WHEN tu.is_sold = 0 THEN 1 ELSE 0 END) as total_unsold,
@@ -35,7 +35,7 @@ return new class extends Migration
         ');
 
         DB::statement("
-            CREATE VIEW vw_villas_structural_status AS
+            CREATE OR REPLACE VIEW vw_villas_structural_status AS
             SELECT so.name as status_name,
                 SUM(CASE WHEN vt.code_prefix = 'A' THEN 1 ELSE 0 END) as type_a_count,
                 SUM(CASE WHEN vt.code_prefix = 'B' THEN 1 ELSE 0 END) as type_b_count,
@@ -48,7 +48,7 @@ return new class extends Migration
         ");
 
         DB::statement("
-            CREATE VIEW vw_towers_structural_status AS
+            CREATE OR REPLACE VIEW vw_towers_structural_status AS
             SELECT so.name as status_name,
                 SUM(CASE WHEN td.code_prefix = 'T1' THEN 1 ELSE 0 END) as tower_1,
                 SUM(CASE WHEN td.code_prefix = 'T2' THEN 1 ELSE 0 END) as tower_2,
@@ -65,7 +65,7 @@ return new class extends Migration
         ");
 
         DB::statement("
-            CREATE VIEW vw_villas_finishing_status AS
+            CREATE OR REPLACE VIEW vw_villas_finishing_status AS
             SELECT so.name as status_name,
                 SUM(CASE WHEN vt.code_prefix = 'A' THEN 1 ELSE 0 END) as type_a_count,
                 SUM(CASE WHEN vt.code_prefix = 'B' THEN 1 ELSE 0 END) as type_b_count,
@@ -78,7 +78,7 @@ return new class extends Migration
         ");
 
         DB::statement("
-            CREATE VIEW vw_towers_finishing_status AS
+            CREATE OR REPLACE VIEW vw_towers_finishing_status AS
             SELECT so.name as status_name,
                 SUM(CASE WHEN td.code_prefix = 'T1' THEN 1 ELSE 0 END) as tower_1,
                 SUM(CASE WHEN td.code_prefix = 'T2' THEN 1 ELSE 0 END) as tower_2,
@@ -95,7 +95,7 @@ return new class extends Migration
         ");
 
         DB::statement("
-            CREATE VIEW vw_villas_facade_status AS
+            CREATE OR REPLACE VIEW vw_villas_facade_status AS
             SELECT so.name as status_name,
                 SUM(CASE WHEN vt.code_prefix = 'A' THEN 1 ELSE 0 END) as type_a_count,
                 SUM(CASE WHEN vt.code_prefix = 'B' THEN 1 ELSE 0 END) as type_b_count,
@@ -108,7 +108,7 @@ return new class extends Migration
         ");
 
         DB::statement("
-            CREATE VIEW vw_towers_facade_status AS
+            CREATE OR REPLACE VIEW vw_towers_facade_status AS
             SELECT so.name as status_name,
                 SUM(CASE WHEN td.code_prefix = 'T1' THEN 1 ELSE 0 END) as tower_1,
                 SUM(CASE WHEN td.code_prefix = 'T2' THEN 1 ELSE 0 END) as tower_2,
