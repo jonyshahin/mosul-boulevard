@@ -10,7 +10,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        DB::statement("
+        DB::statement('
             CREATE VIEW vw_villas_sales_summary AS
             SELECT vt.id as villa_type_id, vt.name as villa_type_name,
                 SUM(CASE WHEN v.is_sold = 1 THEN 1 ELSE 0 END) as total_sold,
@@ -20,9 +20,9 @@ return new class extends Migration
             JOIN villa_types vt ON v.villa_type_id = vt.id
             WHERE v.deleted_at IS NULL
             GROUP BY vt.id, vt.name
-        ");
+        ');
 
-        DB::statement("
+        DB::statement('
             CREATE VIEW vw_towers_sales_summary AS
             SELECT td.id as tower_definition_id, td.name as tower_name,
                 SUM(CASE WHEN tu.is_sold = 1 THEN 1 ELSE 0 END) as total_sold,
@@ -32,7 +32,7 @@ return new class extends Migration
             JOIN tower_definitions td ON tu.tower_definition_id = td.id
             WHERE tu.deleted_at IS NULL
             GROUP BY td.id, td.name
-        ");
+        ');
 
         DB::statement("
             CREATE VIEW vw_villas_structural_status AS
