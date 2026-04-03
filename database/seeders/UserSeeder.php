@@ -14,6 +14,7 @@ class UserSeeder extends Seeder
             'name' => 'Admin',
             'email' => 'admin@mosulboulevard.com',
             'password' => Hash::make('password'),
+            'email_verified_at' => now(),
             'role' => 'admin',
             'is_active' => true,
         ]);
