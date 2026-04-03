@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Dashboard\ContactMessageController;
 use App\Http\Controllers\Dashboard\DashboardController;
 use App\Http\Controllers\Dashboard\ReportController;
 use App\Http\Controllers\Dashboard\SettingController;
@@ -22,4 +23,7 @@ Route::middleware(['web', 'auth'])->prefix('dashboard')->name('dashboard.')->gro
 
     Route::get('settings', [SettingController::class, 'index'])->name('settings.index');
     Route::put('settings', [SettingController::class, 'update'])->name('settings.update');
+
+    Route::resource('messages', ContactMessageController::class)->only(['index', 'show', 'destroy'])->parameters(['messages' => 'contactMessage']);
+    Route::post('messages/{contactMessage}/reply', [ContactMessageController::class, 'reply'])->name('messages.reply');
 });

@@ -1,6 +1,6 @@
-import { Head } from '@inertiajs/react';
+import { Head, router, usePage } from '@inertiajs/react';
 import { Clock, Mail, MapPin, MessageCircle, Phone } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { toast, Toaster } from 'sonner';
 import WebsiteLayout from '@/layouts/website-layout';
 
@@ -9,17 +9,25 @@ interface ContactProps {
 }
 
 export default function Contact({ contact }: ContactProps) {
+    const { flash } = usePage().props as unknown as { flash: { success?: string } };
     const [form, setForm] = useState({ name: '', email: '', subject: '', message: '' });
     const [sending, setSending] = useState(false);
+
+    useEffect(() => {
+        if (flash?.success) {
+            toast.success(flash.success);
+        }
+    }, [flash?.success]);
 
     function handleSubmit(e: React.FormEvent) {
         e.preventDefault();
         setSending(true);
-        setTimeout(() => {
-            toast.success('Message sent! We will get back to you soon.');
-            setForm({ name: '', email: '', subject: '', message: '' });
-            setSending(false);
-        }, 800);
+        router.post('/contact', form, {
+            onSuccess: () => {
+                setForm({ name: '', email: '', subject: '', message: '' });
+            },
+            onFinish: () => setSending(false),
+        });
     }
 
     return (
