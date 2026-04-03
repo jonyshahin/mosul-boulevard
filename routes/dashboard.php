@@ -7,7 +7,7 @@ use App\Http\Controllers\Dashboard\TowerUnitController;
 use App\Http\Controllers\Dashboard\VillaController;
 use Illuminate\Support\Facades\Route;
 
-Route::middleware(['auth'])->prefix('dashboard')->name('dashboard.')->group(function () {
+Route::middleware(['web', 'auth'])->prefix('dashboard')->name('dashboard.')->group(function () {
     Route::get('/', [DashboardController::class, 'index'])->name('index');
     Route::resource('villas', VillaController::class);
     Route::resource('tower-units', TowerUnitController::class)->parameters(['tower-units' => 'towerUnit']);
