@@ -17,7 +17,7 @@ class UpdateTowerUnitRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'code' => ['sometimes', 'required', 'string', 'unique:tower_units,code,'.$this->tower_unit->id],
+            'code' => ['sometimes', 'required', 'string', 'unique:tower_units,code,'.($this->route('towerUnit')?->id ?? $this->route('tower_unit')?->id)],
             'tower_definition_id' => ['required', 'exists:tower_definitions,id'],
             'floor_definition_id' => ['nullable', 'exists:floor_definitions,id'],
             'is_sold' => ['boolean'],
