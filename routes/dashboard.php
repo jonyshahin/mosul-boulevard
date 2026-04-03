@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Dashboard\DashboardController;
 use App\Http\Controllers\Dashboard\ReportController;
+use App\Http\Controllers\Dashboard\SettingController;
 use App\Http\Controllers\Dashboard\SetupController;
 use App\Http\Controllers\Dashboard\TowerUnitController;
 use App\Http\Controllers\Dashboard\VillaController;
@@ -18,4 +19,7 @@ Route::middleware(['web', 'auth'])->prefix('dashboard')->name('dashboard.')->gro
         Route::get('statuses', [SetupController::class, 'statuses'])->name('statuses');
         Route::get('engineers', [SetupController::class, 'engineers'])->name('engineers');
     });
+
+    Route::get('settings', [SettingController::class, 'index'])->name('settings.index');
+    Route::put('settings', [SettingController::class, 'update'])->name('settings.update');
 });
