@@ -14,6 +14,31 @@ use Inertia\Response;
 
 class VillaController extends Controller
 {
+    public function show(Villa $villa): Response
+    {
+        $villa->load([
+            'villaType',
+            'currentStage',
+            'status',
+            'engineer',
+            'structuralStatus',
+            'finishingStatus',
+            'facadeStatus',
+            'villaTasks.status',
+            'villaSiteUpdates.photos',
+        ]);
+
+        return Inertia::render('dashboard/villas/Show', [
+            'villa' => $villa,
+            'stages' => ConstructionStage::forVillas()->ordered()->get(),
+            'statuses' => StatusOption::forCategory('unit')->ordered()->get(),
+            'structuralStatuses' => StatusOption::forCategory('structural')->ordered()->get(),
+            'finishingStatuses' => StatusOption::forCategory('finishing')->ordered()->get(),
+            'facadeStatuses' => StatusOption::forCategory('facade')->ordered()->get(),
+            'engineers' => Engineer::active()->get(),
+        ]);
+    }
+
     public function index(Request $request): Response
     {
         $query = Villa::filter($request->only([
