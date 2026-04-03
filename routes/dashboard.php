@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::middleware(['auth', 'verified'])->prefix('dashboard')->name('dashboard.')->group(function () {
     Route::get('/', [DashboardController::class, 'index'])->name('index');
-    Route::resource('villas', VillaController::class)->only(['index', 'show']);
+    Route::resource('villas', VillaController::class);
     Route::resource('tower-units', TowerUnitController::class)->only(['index', 'show'])->parameters(['tower-units' => 'towerUnit']);
     Route::get('reports', [ReportController::class, 'index'])->name('reports.index');
 

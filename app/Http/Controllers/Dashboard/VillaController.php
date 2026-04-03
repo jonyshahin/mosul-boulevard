@@ -3,11 +3,14 @@
 namespace App\Http\Controllers\Dashboard;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\StoreVillaRequest;
+use App\Http\Requests\UpdateVillaRequest;
 use App\Models\ConstructionStage;
 use App\Models\Engineer;
 use App\Models\StatusOption;
 use App\Models\Villa;
 use App\Models\VillaType;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -37,6 +40,43 @@ class VillaController extends Controller
             'facadeStatuses' => StatusOption::forCategory('facade')->ordered()->get(),
             'engineers' => Engineer::active()->get(),
         ]);
+    }
+
+    public function create(): Response
+    {
+        return Inertia::render('dashboard/villas/Create', $this->lookupData());
+    }
+
+    public function store(StoreVillaRequest $request): RedirectResponse
+    {
+        $villa = Villa::create($request->validated());
+
+        return redirect()->route('dashboard.villas.show', $villa)
+            ->with('success', 'Villa created successfully.');
+    }
+
+    public function edit(Villa $villa): Response
+    {
+        return Inertia::render('dashboard/villas/Edit', [
+            'villa' => $villa,
+            ...$this->lookupData(),
+        ]);
+    }
+
+    public function update(UpdateVillaRequest $request, Villa $villa): RedirectResponse
+    {
+        $villa->update($request->validated());
+
+        return redirect()->route('dashboard.villas.show', $villa)
+            ->with('success', 'Villa updated successfully.');
+    }
+
+    public function destroy(Villa $villa): RedirectResponse
+    {
+        $villa->delete();
+
+        return redirect()->route('dashboard.villas.index')
+            ->with('success', 'Villa deleted successfully.');
     }
 
     public function index(Request $request): Response
@@ -82,5 +122,21 @@ class VillaController extends Controller
                 'current_stage_id',
             ]),
         ]);
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function lookupData(): array
+    {
+        return [
+            'villaTypes' => VillaType::all(),
+            'engineers' => Engineer::active()->get(),
+            'stages' => ConstructionStage::forVillas()->ordered()->get(),
+            'statuses' => StatusOption::forCategory('unit')->ordered()->get(),
+            'structuralStatuses' => StatusOption::forCategory('structural')->ordered()->get(),
+            'finishingStatuses' => StatusOption::forCategory('finishing')->ordered()->get(),
+            'facadeStatuses' => StatusOption::forCategory('facade')->ordered()->get(),
+        ];
     }
 }
