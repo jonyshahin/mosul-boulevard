@@ -50,7 +50,7 @@ class VillaController extends Controller
         ]));
 
         if ($request->filled('search')) {
-            $query->where('code', 'like', '%' . $request->string('search') . '%');
+            $query->where('code', 'like', '%'.$request->string('search').'%');
         }
 
         $villas = $query
