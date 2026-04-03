@@ -7,8 +7,6 @@ Route::inertia('/', 'welcome', [
     'canRegister' => Features::enabled(Features::registration()),
 ])->name('home');
 
-Route::middleware(['auth', 'verified'])->group(function () {
-    Route::inertia('dashboard', 'dashboard')->name('dashboard');
-});
+// Dashboard routes are defined in routes/dashboard.php
 
 require __DIR__.'/settings.php';
