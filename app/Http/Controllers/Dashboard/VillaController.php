@@ -22,6 +22,7 @@ class VillaController extends Controller
     {
         $villa->load([
             'villaType',
+            'customer',
             'currentStage',
             'status',
             'engineer',

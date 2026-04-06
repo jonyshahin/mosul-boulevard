@@ -18,7 +18,8 @@ import {
     TableHeader,
     TableRow,
 } from '@/components/ui/table';
-import { Building2, ChevronLeft, ChevronRight, Search } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Building2, ChevronLeft, ChevronRight, Plus, Search } from 'lucide-react';
 
 interface Villa {
     id: number;
@@ -112,12 +113,20 @@ export default function VillasIndex({
             <Head title="Villas | Mosul Boulevard" />
             <div className="flex flex-1 flex-col gap-6 p-4 md:p-6">
                 {/* Header */}
-                <div className="flex items-center gap-3">
-                    <Building2 className="h-6 w-6 text-mbp-gold" />
-                    <h1 className="text-2xl font-bold tracking-tight">Villas</h1>
-                    <Badge variant="secondary" className="ml-1">
-                        {villas.total}
-                    </Badge>
+                <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                        <Building2 className="text-mbp-gold h-6 w-6" />
+                        <h1 className="text-2xl font-bold tracking-tight">Villas</h1>
+                        <Badge variant="secondary" className="ml-1">
+                            {villas.total}
+                        </Badge>
+                    </div>
+                    <Button asChild className="bg-mbp-gold hover:bg-mbp-gold/90">
+                        <Link href="/dashboard/villas/create">
+                            <Plus className="mr-1 h-4 w-4" />
+                            New Villa
+                        </Link>
+                    </Button>
                 </div>
 
                 {/* Filters */}

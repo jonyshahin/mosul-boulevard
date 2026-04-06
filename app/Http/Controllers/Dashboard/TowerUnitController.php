@@ -109,6 +109,7 @@ class TowerUnitController extends Controller
         $towerUnit->load([
             'towerDefinition',
             'floorDefinition',
+            'customer',
             'currentStage',
             'status',
             'engineer',
