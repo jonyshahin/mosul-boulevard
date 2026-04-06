@@ -24,6 +24,7 @@ interface Option {
 
 interface CreateProps {
     villaTypes: Option[];
+    customers: Option[];
     engineers: Option[];
     stages: Option[];
     statuses: Option[];
@@ -36,6 +37,7 @@ const villaSchema = z.object({
     code: z.string().min(1, 'Code is required'),
     villa_type_id: z.coerce.number().min(1, 'Villa type is required'),
     is_sold: z.boolean().default(false),
+    customer_id: z.string().optional().default(''),
     customer_name: z.string().optional().default(''),
     sale_date: z.string().optional().default(''),
     engineer_id: z.string().optional().default(''),
@@ -60,6 +62,7 @@ function preparePayload(data: VillaFormData) {
         code: data.code,
         villa_type_id: data.villa_type_id,
         is_sold: data.is_sold,
+        customer_id: data.customer_id ? Number(data.customer_id) : null,
         customer_name: data.customer_name || null,
         sale_date: data.sale_date || null,
         engineer_id: data.engineer_id ? Number(data.engineer_id) : null,
@@ -116,6 +119,7 @@ export type { VillaFormData, Option };
 
 export default function VillaCreate({
     villaTypes,
+    customers,
     engineers,
     stages,
     statuses,
@@ -135,6 +139,7 @@ export default function VillaCreate({
             code: '',
             villa_type_id: 0,
             is_sold: false,
+            customer_id: '',
             customer_name: '',
             sale_date: '',
             engineer_id: '',
@@ -214,9 +219,18 @@ export default function VillaCreate({
                                     )}
                                 </div>
 
-                                {/* Customer Name */}
+                                {/* Customer */}
+                                <SelectField
+                                    label="Customer"
+                                    options={customers}
+                                    value={watch('customer_id')}
+                                    onChange={(v) => setValue('customer_id', v)}
+                                    placeholder="Select customer"
+                                />
+
+                                {/* Customer Name (legacy / fallback) */}
                                 <div className="space-y-2">
-                                    <Label htmlFor="customer_name">Customer Name</Label>
+                                    <Label htmlFor="customer_name">Customer Name (legacy)</Label>
                                     <Input id="customer_name" {...register('customer_name')} />
                                 </div>
 

@@ -36,6 +36,7 @@ interface TowerUnit {
     tower_definition_id: number;
     floor_definition_id: number | null;
     is_sold: boolean;
+    customer_id: number | null;
     customer_name: string | null;
     sale_date: string | null;
     engineer_id: number | null;
@@ -58,6 +59,7 @@ interface EditProps {
     towerUnit: TowerUnit;
     towerDefinitions: Option[];
     floorDefinitions: FloorDef[];
+    customers: Option[];
     engineers: Option[];
     stages: Option[];
     statuses: Option[];
@@ -79,6 +81,7 @@ export default function TowerUnitEdit({
     towerUnit,
     towerDefinitions,
     floorDefinitions,
+    customers,
     engineers,
     stages,
     statuses,
@@ -101,6 +104,7 @@ export default function TowerUnitEdit({
             tower_definition_id: towerUnit.tower_definition_id,
             floor_definition_id: numToStr(towerUnit.floor_definition_id),
             is_sold: towerUnit.is_sold,
+            customer_id: numToStr(towerUnit.customer_id),
             customer_name: towerUnit.customer_name ?? '',
             sale_date: dateToInput(towerUnit.sale_date),
             engineer_id: numToStr(towerUnit.engineer_id),
@@ -230,9 +234,18 @@ export default function TowerUnitEdit({
                                     placeholder="Select floor"
                                 />
 
-                                {/* Customer Name */}
+                                {/* Customer */}
+                                <SelectField
+                                    label="Customer"
+                                    options={customers}
+                                    value={watch('customer_id')}
+                                    onChange={(v) => setValue('customer_id', v)}
+                                    placeholder="Select customer"
+                                />
+
+                                {/* Customer Name (legacy / fallback) */}
                                 <div className="space-y-2">
-                                    <Label htmlFor="customer_name">Customer Name</Label>
+                                    <Label htmlFor="customer_name">Customer Name (legacy)</Label>
                                     <Input id="customer_name" {...register('customer_name')} />
                                 </div>
 

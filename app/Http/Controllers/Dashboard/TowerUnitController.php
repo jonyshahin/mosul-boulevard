@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreTowerUnitRequest;
 use App\Http\Requests\UpdateTowerUnitRequest;
 use App\Models\ConstructionStage;
+use App\Models\Customer;
 use App\Models\Engineer;
 use App\Models\FloorDefinition;
 use App\Models\StatusOption;
@@ -137,6 +138,7 @@ class TowerUnitController extends Controller
         return [
             'towerDefinitions' => TowerDefinition::all(),
             'floorDefinitions' => FloorDefinition::all(),
+            'customers' => Customer::active()->orderBy('name')->get(['id', 'name']),
             'engineers' => Engineer::active()->get(),
             'stages' => ConstructionStage::forTowers()->ordered()->get(),
             'statuses' => StatusOption::forCategory('unit')->ordered()->get(),

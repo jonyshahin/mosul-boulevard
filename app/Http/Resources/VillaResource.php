@@ -29,6 +29,7 @@ class VillaResource extends JsonResource
             'acc_steel_qty' => $this->acc_steel_qty,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
+            'customer' => new CustomerResource($this->whenLoaded('customer')),
             'villa_type' => new VillaTypeResource($this->whenLoaded('villaType')),
             'current_stage' => new ConstructionStageResource($this->whenLoaded('currentStage')),
             'status' => new StatusOptionResource($this->whenLoaded('status')),

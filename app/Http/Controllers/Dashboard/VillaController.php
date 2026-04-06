@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreVillaRequest;
 use App\Http\Requests\UpdateVillaRequest;
 use App\Models\ConstructionStage;
+use App\Models\Customer;
 use App\Models\Engineer;
 use App\Models\StatusOption;
 use App\Models\Villa;
@@ -131,6 +132,7 @@ class VillaController extends Controller
     {
         return [
             'villaTypes' => VillaType::all(),
+            'customers' => Customer::active()->orderBy('name')->get(['id', 'name']),
             'engineers' => Engineer::active()->get(),
             'stages' => ConstructionStage::forVillas()->ordered()->get(),
             'statuses' => StatusOption::forCategory('unit')->ordered()->get(),

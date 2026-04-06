@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\V1\AuthController;
+use App\Http\Controllers\Api\V1\CustomerController;
 use App\Http\Controllers\Api\V1\MenuItemController;
 use App\Http\Controllers\Api\V1\ReportController;
 use App\Http\Controllers\Api\V1\SetupController;
@@ -17,6 +18,7 @@ Route::prefix('v1')->group(function () {
 
     Route::middleware('auth:sanctum')->group(function () {
         Route::post('/auth/logout', [AuthController::class, 'logout']);
+        Route::apiResource('customers', CustomerController::class);
         Route::apiResource('villas', VillaController::class);
         Route::apiResource('villas.tasks', VillaTaskController::class)->only(['index', 'store']);
         Route::prefix('villa-tasks')->name('villa-tasks.')->group(function () {

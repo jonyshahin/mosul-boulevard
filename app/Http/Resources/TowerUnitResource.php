@@ -30,6 +30,7 @@ class TowerUnitResource extends JsonResource
             'remarks' => $this->remarks,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
+            'customer' => new CustomerResource($this->whenLoaded('customer')),
             'tower_definition' => new TowerDefinitionResource($this->whenLoaded('towerDefinition')),
             'floor_definition' => new FloorDefinitionResource($this->whenLoaded('floorDefinition')),
             'current_stage' => new ConstructionStageResource($this->whenLoaded('currentStage')),

@@ -20,6 +20,7 @@ class UpdateVillaRequest extends FormRequest
             'code' => ['sometimes', 'required', 'string', 'unique:villas,code,'.$this->villa->id],
             'villa_type_id' => ['required', 'exists:villa_types,id'],
             'is_sold' => ['boolean'],
+            'customer_id' => ['nullable', 'exists:customers,id'],
             'customer_name' => ['nullable', 'string', 'max:255'],
             'sale_date' => ['nullable', 'date'],
             'current_stage_id' => ['nullable', 'exists:construction_stages,id'],
