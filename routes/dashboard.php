@@ -7,11 +7,13 @@ use App\Http\Controllers\Dashboard\ReportController;
 use App\Http\Controllers\Dashboard\SettingController;
 use App\Http\Controllers\Dashboard\SetupController;
 use App\Http\Controllers\Dashboard\TowerUnitController;
+use App\Http\Controllers\Dashboard\UserController;
 use App\Http\Controllers\Dashboard\VillaController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware(['web', 'auth'])->prefix('dashboard')->name('dashboard.')->group(function () {
     Route::get('/', [DashboardController::class, 'index'])->name('index');
+    Route::resource('users', UserController::class)->except(['show']);
     Route::resource('customers', CustomerController::class);
     Route::resource('villas', VillaController::class);
     Route::resource('tower-units', TowerUnitController::class)->parameters(['tower-units' => 'towerUnit']);
