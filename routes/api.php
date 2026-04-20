@@ -2,8 +2,15 @@
 
 use App\Http\Controllers\Api\V1\AuthController;
 use App\Http\Controllers\Api\V1\CustomerController;
+use App\Http\Controllers\Api\V1\FcmTokenController;
+use App\Http\Controllers\Api\V1\InspectionRequestController;
 use App\Http\Controllers\Api\V1\MenuItemController;
+use App\Http\Controllers\Api\V1\NotificationController;
+use App\Http\Controllers\Api\V1\NotificationRecipientRuleController;
 use App\Http\Controllers\Api\V1\ReportController;
+use App\Http\Controllers\Api\V1\RequestMediaController;
+use App\Http\Controllers\Api\V1\RequestReplyController;
+use App\Http\Controllers\Api\V1\RequestTypeController;
 use App\Http\Controllers\Api\V1\SetupController;
 use App\Http\Controllers\Api\V1\TowerSiteUpdateController;
 use App\Http\Controllers\Api\V1\TowerTaskController;
@@ -51,6 +58,31 @@ Route::prefix('v1')->group(function () {
             Route::get('facade-status', [ReportController::class, 'facadeStatus'])->name('facade');
             Route::get('dashboard-stats', [ReportController::class, 'dashboardStats'])->name('dashboard');
         });
+        Route::get('inspection-requests/stats', [InspectionRequestController::class, 'stats'])->name('inspection-requests.stats');
+        Route::get('inspection-requests/my-assignments', [InspectionRequestController::class, 'myAssignments'])->name('inspection-requests.my-assignments');
+        Route::post('inspection-requests/{inspection_request}/transition', [InspectionRequestController::class, 'transition'])->name('inspection-requests.transition');
+        Route::post('inspection-requests/{inspection_request}/assign', [InspectionRequestController::class, 'assign'])->name('inspection-requests.assign');
+        Route::apiResource('inspection-requests', InspectionRequestController::class);
+        Route::get('inspection-requests/{inspection_request}/replies', [RequestReplyController::class, 'index'])->name('inspection-requests.replies.index');
+        Route::post('inspection-requests/{inspection_request}/replies', [RequestReplyController::class, 'store'])->name('inspection-requests.replies.store');
+        Route::delete('replies/{reply}', [RequestReplyController::class, 'destroy'])->name('replies.destroy');
+        Route::get('request-media/{media}/download', [RequestMediaController::class, 'download'])->name('request-media.download');
+        Route::delete('request-media/{media}', [RequestMediaController::class, 'destroy'])->name('request-media.destroy');
+        Route::apiResource('request-types', RequestTypeController::class);
+
+        Route::post('fcm-tokens', [FcmTokenController::class, 'store'])->name('fcm-tokens.store');
+        Route::delete('fcm-tokens/{token}', [FcmTokenController::class, 'destroy'])
+            ->where('token', '.*')
+            ->name('fcm-tokens.destroy');
+
+        Route::get('notifications', [NotificationController::class, 'index'])->name('notifications.index');
+        Route::get('notifications/unread-count', [NotificationController::class, 'unreadCount'])->name('notifications.unread-count');
+        Route::post('notifications/mark-all-read', [NotificationController::class, 'markAllRead'])->name('notifications.mark-all-read');
+        Route::post('notifications/{id}/read', [NotificationController::class, 'markRead'])->name('notifications.mark-read');
+
+        Route::apiResource('notification-recipient-rules', NotificationRecipientRuleController::class)
+            ->except(['show']);
+
         Route::get('setup/stages', [SetupController::class, 'stages'])->name('setup.stages');
         Route::get('setup/statuses', [SetupController::class, 'statuses'])->name('setup.statuses');
         Route::get('setup/engineers', [SetupController::class, 'engineers'])->name('setup.engineers');

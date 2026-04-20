@@ -60,6 +60,9 @@ return [
             'report' => false,
         ],
 
+        // Note: 'r2' disk is auto-registered by Laravel Cloud via the
+        // LARAVEL_CLOUD_DISK_CONFIG env var. Do not add it manually here.
+
     ],
 
     /*

@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Fortify\TwoFactorAuthenticatable;
@@ -57,5 +58,45 @@ class User extends Authenticatable
     public function isCustomer(): bool
     {
         return $this->role === 'customer';
+    }
+
+    /**
+     * @return HasMany<InspectionRequest, $this>
+     */
+    public function createdInspectionRequests(): HasMany
+    {
+        return $this->hasMany(InspectionRequest::class, 'requester_id');
+    }
+
+    /**
+     * @return HasMany<InspectionRequest, $this>
+     */
+    public function assignedInspectionRequests(): HasMany
+    {
+        return $this->hasMany(InspectionRequest::class, 'assignee_id');
+    }
+
+    /**
+     * @return HasMany<FcmToken, $this>
+     */
+    public function fcmTokens(): HasMany
+    {
+        return $this->hasMany(FcmToken::class);
+    }
+
+    /**
+     * Preferred channels for inspection notifications. Override per-user in
+     * the future by reading from a user_preferences table; for now it's
+     * the full fan-out for every role that cares.
+     *
+     * @return array<int, string>
+     */
+    public function notificationChannels(): array
+    {
+        if ($this->isCustomer()) {
+            return [];
+        }
+
+        return ['database', 'mail', 'fcm', 'broadcast'];
     }
 }

@@ -1,0 +1,48 @@
+<?php
+
+namespace App\Events;
+
+use App\Models\InspectionRequest;
+use Illuminate\Broadcasting\InteractsWithSockets;
+use Illuminate\Broadcasting\PrivateChannel;
+use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
+use Illuminate\Foundation\Events\Dispatchable;
+use Illuminate\Queue\SerializesModels;
+
+class InspectionRequestCreated implements ShouldBroadcast
+{
+    use Dispatchable, InteractsWithSockets, SerializesModels;
+
+    public function __construct(
+        public readonly InspectionRequest $request,
+    ) {}
+
+    /**
+     * @return array<int, PrivateChannel>
+     */
+    public function broadcastOn(): array
+    {
+        $channels = [new PrivateChannel('inspection-requests.'.$this->request->id)];
+
+        foreach ([$this->request->assignee_id, $this->request->requester_id] as $uid) {
+            if ($uid) {
+                $channels[] = new PrivateChannel('users.'.$uid.'.notifications');
+            }
+        }
+
+        return $channels;
+    }
+
+    public function broadcastAs(): string
+    {
+        return 'inspection-request.created';
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function broadcastWith(): array
+    {
+        return InspectionRequestEventPayload::make($this->request);
+    }
+}
