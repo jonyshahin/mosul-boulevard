@@ -18,4 +18,12 @@ return [
         'video/quicktime',
         'video/webm',
     ],
+
+    'notification_queue' => env('INSPECTION_NOTIFICATION_QUEUE', 'notifications'),
+
+    'overdue_check_time' => env('INSPECTION_OVERDUE_TIME', '08:00'),
+
+    'overdue_timezone' => env('INSPECTION_TIMEZONE', 'Asia/Baghdad'),
+
+    'default_locale' => env('APP_LOCALE', 'en'),
 ];
