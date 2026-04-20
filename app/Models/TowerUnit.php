@@ -27,6 +27,7 @@ class TowerUnit extends Model
         'tower_definition_id',
         'floor_definition_id',
         'is_sold',
+        'customer_id',
         'customer_name',
         'sale_date',
         'current_stage_id',
@@ -63,6 +64,11 @@ class TowerUnit extends Model
     public function towerDefinition(): BelongsTo
     {
         return $this->belongsTo(TowerDefinition::class);
+    }
+
+    public function customer(): BelongsTo
+    {
+        return $this->belongsTo(Customer::class);
     }
 
     public function floorDefinition(): BelongsTo

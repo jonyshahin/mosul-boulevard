@@ -1,6 +1,7 @@
 import { Head, Link } from '@inertiajs/react';
 import AppLayout from '@/layouts/app-layout';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
     Table,
@@ -11,7 +12,8 @@ import {
     TableRow,
 } from '@/components/ui/table';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { ArrowLeft, Calendar, ClipboardList, FileText, Image } from 'lucide-react';
+import { CustomerInfoDialog, type CustomerSummary } from '@/components/customer-info-dialog';
+import { ArrowLeft, Calendar, ClipboardList, FileText, Image, Pencil } from 'lucide-react';
 
 interface StatusOption {
     id: number;
@@ -49,6 +51,7 @@ interface Villa {
     id: number;
     code: string;
     is_sold: boolean;
+    customer: CustomerSummary | null;
     customer_name: string | null;
     sale_date: string | null;
     completion_pct: number | null;
@@ -135,22 +138,35 @@ export default function VillaShow({ villa }: VillaShowProps) {
                 {/* Header Card */}
                 <Card>
                     <CardHeader className="pb-3">
-                        <div className="flex items-center gap-3">
-                            <CardTitle className="text-xl">Villa {villa.code}</CardTitle>
-                            {villa.is_sold ? (
-                                <Badge className="bg-emerald-100 text-emerald-800 dark:bg-emerald-900 dark:text-emerald-200">
-                                    Sold
-                                </Badge>
-                            ) : (
-                                <Badge variant="outline">Not Sold</Badge>
-                            )}
-                            <StatusBadge status={villa.status} />
+                        <div className="flex items-center justify-between gap-3">
+                            <div className="flex items-center gap-3">
+                                <CardTitle className="text-xl">Villa {villa.code}</CardTitle>
+                                {villa.is_sold ? (
+                                    <Badge className="bg-emerald-100 text-emerald-800 dark:bg-emerald-900 dark:text-emerald-200">
+                                        Sold
+                                    </Badge>
+                                ) : (
+                                    <Badge variant="outline">Not Sold</Badge>
+                                )}
+                                <StatusBadge status={villa.status} />
+                            </div>
+                            <Button asChild variant="outline" size="sm">
+                                <Link href={`/dashboard/villas/${villa.id}/edit`}>
+                                    <Pencil className="mr-1 h-4 w-4" />
+                                    Edit
+                                </Link>
+                            </Button>
                         </div>
                     </CardHeader>
                     <CardContent>
                         <dl className="grid grid-cols-2 gap-4 md:grid-cols-3">
                             <InfoRow label="Type">{villa.villa_type?.name ?? '-'}</InfoRow>
-                            <InfoRow label="Customer">{villa.customer_name ?? '-'}</InfoRow>
+                            <InfoRow label="Customer">
+                                <CustomerInfoDialog
+                                    customer={villa.customer}
+                                    fallbackName={villa.customer_name}
+                                />
+                            </InfoRow>
                             <InfoRow label="Engineer">{villa.engineer?.name ?? '-'}</InfoRow>
                             <InfoRow label="Current Stage">{villa.current_stage?.name ?? '-'}</InfoRow>
                             <InfoRow label="Completion">

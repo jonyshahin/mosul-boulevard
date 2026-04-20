@@ -21,6 +21,7 @@ class StoreTowerUnitRequest extends FormRequest
             'tower_definition_id' => ['required', 'exists:tower_definitions,id'],
             'floor_definition_id' => ['nullable', 'exists:floor_definitions,id'],
             'is_sold' => ['boolean'],
+            'customer_id' => ['nullable', 'exists:customers,id'],
             'customer_name' => ['nullable', 'string', 'max:255'],
             'sale_date' => ['nullable', 'date'],
             'current_stage_id' => ['nullable', 'exists:construction_stages,id'],

@@ -20,6 +20,7 @@ class DatabaseSeeder extends Seeder
             VillaSeeder::class,
             TowerUnitSeeder::class,
             MenuItemSeeder::class,
+            SettingSeeder::class,
         ]);
     }
 }

@@ -33,6 +33,7 @@ interface FloorDef {
 interface CreateProps {
     towerDefinitions: Option[];
     floorDefinitions: FloorDef[];
+    customers: Option[];
     engineers: Option[];
     stages: Option[];
     statuses: Option[];
@@ -46,6 +47,7 @@ const towerUnitSchema = z.object({
     tower_definition_id: z.coerce.number().min(1, 'Tower is required'),
     floor_definition_id: z.string().optional().default(''),
     is_sold: z.boolean().default(false),
+    customer_id: z.string().optional().default(''),
     customer_name: z.string().optional().default(''),
     sale_date: z.string().optional().default(''),
     engineer_id: z.string().optional().default(''),
@@ -72,6 +74,7 @@ function preparePayload(data: TowerUnitFormData) {
         tower_definition_id: data.tower_definition_id,
         floor_definition_id: data.floor_definition_id ? Number(data.floor_definition_id) : null,
         is_sold: data.is_sold,
+        customer_id: data.customer_id ? Number(data.customer_id) : null,
         customer_name: data.customer_name || null,
         sale_date: data.sale_date || null,
         engineer_id: data.engineer_id ? Number(data.engineer_id) : null,
@@ -130,6 +133,7 @@ export type { TowerUnitFormData, Option, FloorDef };
 export default function TowerUnitCreate({
     towerDefinitions,
     floorDefinitions,
+    customers,
     engineers,
     stages,
     statuses,
@@ -150,6 +154,7 @@ export default function TowerUnitCreate({
             tower_definition_id: 0,
             floor_definition_id: '',
             is_sold: false,
+            customer_id: '',
             customer_name: '',
             sale_date: '',
             engineer_id: '',
@@ -248,9 +253,18 @@ export default function TowerUnitCreate({
                                     placeholder="Select floor"
                                 />
 
-                                {/* Customer Name */}
+                                {/* Customer */}
+                                <SelectField
+                                    label="Customer"
+                                    options={customers}
+                                    value={watch('customer_id')}
+                                    onChange={(v) => setValue('customer_id', v)}
+                                    placeholder="Select customer"
+                                />
+
+                                {/* Customer Name (legacy / fallback) */}
                                 <div className="space-y-2">
-                                    <Label htmlFor="customer_name">Customer Name</Label>
+                                    <Label htmlFor="customer_name">Customer Name (legacy)</Label>
                                     <Input id="customer_name" {...register('customer_name')} />
                                 </div>
 

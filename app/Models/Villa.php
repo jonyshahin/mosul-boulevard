@@ -26,6 +26,7 @@ class Villa extends Model
         'code',
         'villa_type_id',
         'is_sold',
+        'customer_id',
         'customer_name',
         'sale_date',
         'current_stage_id',
@@ -61,6 +62,11 @@ class Villa extends Model
     public function villaType(): BelongsTo
     {
         return $this->belongsTo(VillaType::class);
+    }
+
+    public function customer(): BelongsTo
+    {
+        return $this->belongsTo(Customer::class);
     }
 
     public function currentStage(): BelongsTo

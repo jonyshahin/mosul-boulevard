@@ -34,6 +34,7 @@ interface Villa {
     code: string;
     villa_type_id: number;
     is_sold: boolean;
+    customer_id: number | null;
     customer_name: string | null;
     sale_date: string | null;
     engineer_id: number | null;
@@ -54,6 +55,7 @@ interface Villa {
 interface EditProps {
     villa: Villa;
     villaTypes: Option[];
+    customers: Option[];
     engineers: Option[];
     stages: Option[];
     statuses: Option[];
@@ -74,6 +76,7 @@ function numToStr(val: number | null): string {
 export default function VillaEdit({
     villa,
     villaTypes,
+    customers,
     engineers,
     stages,
     statuses,
@@ -95,6 +98,7 @@ export default function VillaEdit({
             code: villa.code,
             villa_type_id: villa.villa_type_id,
             is_sold: villa.is_sold,
+            customer_id: numToStr(villa.customer_id),
             customer_name: villa.customer_name ?? '',
             sale_date: dateToInput(villa.sale_date),
             engineer_id: numToStr(villa.engineer_id),
@@ -205,9 +209,18 @@ export default function VillaEdit({
                                     )}
                                 </div>
 
-                                {/* Customer Name */}
+                                {/* Customer */}
+                                <SelectField
+                                    label="Customer"
+                                    options={customers}
+                                    value={watch('customer_id')}
+                                    onChange={(v) => setValue('customer_id', v)}
+                                    placeholder="Select customer"
+                                />
+
+                                {/* Customer Name (legacy / fallback) */}
                                 <div className="space-y-2">
-                                    <Label htmlFor="customer_name">Customer Name</Label>
+                                    <Label htmlFor="customer_name">Customer Name (legacy)</Label>
                                     <Input id="customer_name" {...register('customer_name')} />
                                 </div>
 

@@ -18,7 +18,8 @@ import {
     TableHeader,
     TableRow,
 } from '@/components/ui/table';
-import { Building, ChevronLeft, ChevronRight, Search } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Building, ChevronLeft, ChevronRight, Plus, Search } from 'lucide-react';
 
 interface TowerUnit {
     id: number;
@@ -110,12 +111,20 @@ export default function TowerUnitsIndex({
             <Head title="Tower Units | Mosul Boulevard" />
             <div className="flex flex-1 flex-col gap-6 p-4 md:p-6">
                 {/* Header */}
-                <div className="flex items-center gap-3">
-                    <Building className="h-6 w-6 text-mbp-blue" />
-                    <h1 className="text-2xl font-bold tracking-tight">Tower Units</h1>
-                    <Badge variant="secondary" className="ml-1">
-                        {towerUnits.total}
-                    </Badge>
+                <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                        <Building className="text-mbp-blue h-6 w-6" />
+                        <h1 className="text-2xl font-bold tracking-tight">Tower Units</h1>
+                        <Badge variant="secondary" className="ml-1">
+                            {towerUnits.total}
+                        </Badge>
+                    </div>
+                    <Button asChild className="bg-mbp-blue hover:bg-mbp-blue/90">
+                        <Link href="/dashboard/tower-units/create">
+                            <Plus className="mr-1 h-4 w-4" />
+                            New Tower Unit
+                        </Link>
+                    </Button>
                 </div>
 
                 {/* Filters */}

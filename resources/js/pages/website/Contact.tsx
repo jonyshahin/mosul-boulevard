@@ -1,21 +1,33 @@
-import { Head } from '@inertiajs/react';
-import { Mail, MapPin, Phone } from 'lucide-react';
-import { useState } from 'react';
+import { Head, router, usePage } from '@inertiajs/react';
+import { Clock, Mail, MapPin, MessageCircle, Phone } from 'lucide-react';
+import { useEffect, useState } from 'react';
 import { toast, Toaster } from 'sonner';
 import WebsiteLayout from '@/layouts/website-layout';
 
-export default function Contact() {
+interface ContactProps {
+    contact: Record<string, string>;
+}
+
+export default function Contact({ contact }: ContactProps) {
+    const { flash } = usePage().props as unknown as { flash: { success?: string } };
     const [form, setForm] = useState({ name: '', email: '', subject: '', message: '' });
     const [sending, setSending] = useState(false);
+
+    useEffect(() => {
+        if (flash?.success) {
+            toast.success(flash.success);
+        }
+    }, [flash?.success]);
 
     function handleSubmit(e: React.FormEvent) {
         e.preventDefault();
         setSending(true);
-        setTimeout(() => {
-            toast.success('Message sent! We will get back to you soon.');
-            setForm({ name: '', email: '', subject: '', message: '' });
-            setSending(false);
-        }, 800);
+        router.post('/contact', form, {
+            onSuccess: () => {
+                setForm({ name: '', email: '', subject: '', message: '' });
+            },
+            onFinish: () => setSending(false),
+        });
     }
 
     return (
@@ -43,39 +55,65 @@ export default function Contact() {
                         </p>
 
                         <div className="space-y-6">
-                            <div className="flex items-start gap-4">
-                                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-[#B8860B]/10">
-                                    <Phone className="h-5 w-5 text-[#B8860B]" />
+                            {contact.contact_phone && (
+                                <div className="flex items-start gap-4">
+                                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-[#B8860B]/10">
+                                        <Phone className="h-5 w-5 text-[#B8860B]" />
+                                    </div>
+                                    <div>
+                                        <h3 className="font-medium">Phone</h3>
+                                        <p className="text-gray-400">{contact.contact_phone}</p>
+                                    </div>
                                 </div>
-                                <div>
-                                    <h3 className="font-medium">Phone</h3>
-                                    <p className="text-gray-400">+964 770 000 0000</p>
-                                </div>
-                            </div>
+                            )}
 
-                            <div className="flex items-start gap-4">
-                                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-[#B8860B]/10">
-                                    <Mail className="h-5 w-5 text-[#B8860B]" />
+                            {contact.contact_email && (
+                                <div className="flex items-start gap-4">
+                                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-[#B8860B]/10">
+                                        <Mail className="h-5 w-5 text-[#B8860B]" />
+                                    </div>
+                                    <div>
+                                        <h3 className="font-medium">Email</h3>
+                                        <p className="text-gray-400">{contact.contact_email}</p>
+                                    </div>
                                 </div>
-                                <div>
-                                    <h3 className="font-medium">Email</h3>
-                                    <p className="text-gray-400">info@mosulboulevard.com</p>
-                                </div>
-                            </div>
+                            )}
 
-                            <div className="flex items-start gap-4">
-                                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-[#B8860B]/10">
-                                    <MapPin className="h-5 w-5 text-[#B8860B]" />
+                            {contact.contact_whatsapp && (
+                                <div className="flex items-start gap-4">
+                                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-[#B8860B]/10">
+                                        <MessageCircle className="h-5 w-5 text-[#B8860B]" />
+                                    </div>
+                                    <div>
+                                        <h3 className="font-medium">WhatsApp</h3>
+                                        <p className="text-gray-400">{contact.contact_whatsapp}</p>
+                                    </div>
                                 </div>
-                                <div>
-                                    <h3 className="font-medium">Address</h3>
-                                    <p className="text-gray-400">
-                                        Mosul Boulevard Project<br />
-                                        Mosul, Nineveh Governorate<br />
-                                        Iraq
-                                    </p>
+                            )}
+
+                            {contact.contact_address && (
+                                <div className="flex items-start gap-4">
+                                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-[#B8860B]/10">
+                                        <MapPin className="h-5 w-5 text-[#B8860B]" />
+                                    </div>
+                                    <div>
+                                        <h3 className="font-medium">Address</h3>
+                                        <p className="text-gray-400 whitespace-pre-line">{contact.contact_address}</p>
+                                    </div>
                                 </div>
-                            </div>
+                            )}
+
+                            {contact.contact_working_hours && (
+                                <div className="flex items-start gap-4">
+                                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-[#B8860B]/10">
+                                        <Clock className="h-5 w-5 text-[#B8860B]" />
+                                    </div>
+                                    <div>
+                                        <h3 className="font-medium">Working Hours</h3>
+                                        <p className="text-gray-400">{contact.contact_working_hours}</p>
+                                    </div>
+                                </div>
+                            )}
                         </div>
                     </div>
 

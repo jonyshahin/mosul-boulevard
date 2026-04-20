@@ -1,5 +1,5 @@
 import { Link } from '@inertiajs/react';
-import { BarChart3, Building, Building2, Home, LayoutGrid, Settings } from 'lucide-react';
+import { BarChart3, Building, Building2, Home, LayoutGrid, Mail, Settings, Settings2, UserCog, Users } from 'lucide-react';
 import AppLogo from '@/components/app-logo';
 import { NavFooter } from '@/components/nav-footer';
 import { NavMain } from '@/components/nav-main';
@@ -22,6 +22,16 @@ const mainNavItems: NavItem[] = [
         icon: LayoutGrid,
     },
     {
+        title: 'Messages',
+        href: '/dashboard/messages',
+        icon: Mail,
+    },
+    {
+        title: 'Customers',
+        href: '/dashboard/customers',
+        icon: Users,
+    },
+    {
         title: 'Villas',
         href: '/dashboard/villas',
         icon: Building2,
@@ -40,6 +50,16 @@ const mainNavItems: NavItem[] = [
         title: 'Setup',
         href: '/dashboard/setup/stages',
         icon: Settings,
+    },
+    {
+        title: 'Users',
+        href: '/dashboard/users',
+        icon: UserCog,
+    },
+    {
+        title: 'Settings',
+        href: '/dashboard/settings',
+        icon: Settings2,
     },
 ];
 
