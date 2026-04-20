@@ -75,4 +75,28 @@ class User extends Authenticatable
     {
         return $this->hasMany(InspectionRequest::class, 'assignee_id');
     }
+
+    /**
+     * @return HasMany<FcmToken, $this>
+     */
+    public function fcmTokens(): HasMany
+    {
+        return $this->hasMany(FcmToken::class);
+    }
+
+    /**
+     * Preferred channels for inspection notifications. Override per-user in
+     * the future by reading from a user_preferences table; for now it's
+     * the full fan-out for every role that cares.
+     *
+     * @return array<int, string>
+     */
+    public function notificationChannels(): array
+    {
+        if ($this->isCustomer()) {
+            return [];
+        }
+
+        return ['database', 'mail', 'fcm', 'broadcast'];
+    }
 }
