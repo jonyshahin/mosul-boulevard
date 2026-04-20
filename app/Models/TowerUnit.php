@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
@@ -114,6 +115,14 @@ class TowerUnit extends Model
     public function towerSiteUpdates(): HasMany
     {
         return $this->hasMany(TowerSiteUpdate::class);
+    }
+
+    /**
+     * @return MorphMany<InspectionRequest, $this>
+     */
+    public function inspectionRequests(): MorphMany
+    {
+        return $this->morphMany(InspectionRequest::class, 'subject');
     }
 
     public function scopeSold(Builder $query): Builder
