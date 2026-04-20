@@ -18,6 +18,7 @@ class DatabaseSeeder extends Seeder
             StatusOptionSeeder::class,
             ConstructionStageSeeder::class,
             RequestTypeSeeder::class,
+            NotificationRecipientRuleSeeder::class,
             VillaSeeder::class,
             TowerUnitSeeder::class,
             MenuItemSeeder::class,
