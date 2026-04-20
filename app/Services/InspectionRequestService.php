@@ -3,6 +3,9 @@
 namespace App\Services;
 
 use App\Enums\RequestStatus;
+use App\Events\InspectionRequestAssigned;
+use App\Events\InspectionRequestCreated;
+use App\Events\InspectionRequestTransitioned;
 use App\Models\InspectionRequest;
 use App\Models\RequestReply;
 use App\Models\TowerUnit;
@@ -11,6 +14,7 @@ use App\Models\Villa;
 use Illuminate\Database\ConnectionInterface;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\DB;
 use InvalidArgumentException;
 
 class InspectionRequestService
@@ -53,6 +57,10 @@ class InspectionRequestService
                 $this->mediaUploadService->store($file, $request, $author);
             }
 
+            DB::afterCommit(function () use ($request): void {
+                InspectionRequestCreated::dispatch($request->fresh());
+            });
+
             return $request;
         });
     }
@@ -82,6 +90,10 @@ class InspectionRequestService
         ?string $note = null,
     ): InspectionRequest {
         return $this->db->transaction(function () use ($request, $target, $actor, $note) {
+            $from = $request->status instanceof RequestStatus
+                ? $request->status
+                : RequestStatus::from((string) $request->status);
+
             $now = now();
 
             $updates = ['status' => $target->value];
@@ -94,6 +106,7 @@ class InspectionRequestService
                     'verified_at' => null,
                     'verified_by' => null,
                     'closed_at' => null,
+                    'overdue_notified_at' => null,
                 ],
                 default => [],
             });
@@ -109,15 +122,32 @@ class InspectionRequestService
                 ]);
             }
 
-            return $request->fresh();
+            $fresh = $request->fresh();
+
+            DB::afterCommit(function () use ($fresh, $from, $target, $actor): void {
+                InspectionRequestTransitioned::dispatch($fresh, $from, $target, $actor);
+            });
+
+            return $fresh;
         });
     }
 
     public function assign(InspectionRequest $request, User $newAssignee, User $actor): InspectionRequest
     {
-        $request->update(['assignee_id' => $newAssignee->id]);
+        return $this->db->transaction(function () use ($request, $newAssignee) {
+            $previousAssigneeId = $request->assignee_id;
+            $previousAssignee = $previousAssigneeId ? User::find($previousAssigneeId) : null;
 
-        return $request->fresh();
+            $request->update(['assignee_id' => $newAssignee->id]);
+
+            $fresh = $request->fresh();
+
+            DB::afterCommit(function () use ($fresh, $previousAssignee): void {
+                InspectionRequestAssigned::dispatch($fresh, $previousAssignee);
+            });
+
+            return $fresh;
+        });
     }
 
     public function destroy(InspectionRequest $request): void

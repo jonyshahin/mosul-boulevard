@@ -3,11 +3,13 @@
 namespace App\Services;
 
 use App\Enums\RequestStatus;
+use App\Events\RequestReplyCreated;
 use App\Models\InspectionRequest;
 use App\Models\RequestReply;
 use App\Models\User;
 use Illuminate\Database\ConnectionInterface;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\DB;
 
 class RequestReplyService
 {
@@ -46,6 +48,10 @@ class RequestReplyService
             if ($triggers !== null) {
                 $this->inspectionRequestService->transition($request, $triggers, $author);
             }
+
+            DB::afterCommit(function () use ($reply): void {
+                RequestReplyCreated::dispatch($reply->fresh());
+            });
 
             return $reply;
         });
