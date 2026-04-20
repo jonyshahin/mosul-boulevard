@@ -17,7 +17,6 @@ use Illuminate\Support\Facades\Notification;
 #[AsEventListener(event: InspectionRequestAssigned::class)]
 class DispatchInspectionRequestNotifications implements ShouldQueue
 {
-    public string $connection = 'redis';
 
     public string $queue = 'notifications';
 

@@ -18,7 +18,6 @@ class InspectionRequestRepliedTo extends Notification implements ShouldQueue
     public function __construct(
         public readonly RequestReply $reply,
     ) {
-        $this->connection = 'redis';
         $this->queue = config('inspection_requests.notification_queue');
     }
 

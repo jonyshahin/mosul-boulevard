@@ -18,7 +18,6 @@ class AdditionalRecipientNotification extends Notification implements ShouldQueu
         public readonly InspectionRequest $request,
         public readonly string $reason = 'rule-match',
     ) {
-        $this->connection = 'redis';
         $this->queue = config('inspection_requests.notification_queue');
     }
 

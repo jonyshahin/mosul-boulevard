@@ -17,7 +17,6 @@ class InspectionRequestOverdueReminder extends Notification implements ShouldQue
     public function __construct(
         public readonly InspectionRequest $request,
     ) {
-        $this->connection = 'redis';
         $this->queue = config('inspection_requests.notification_queue');
     }
 

@@ -22,7 +22,6 @@ class InspectionRequestTransitioned extends Notification implements ShouldQueue
         public readonly User $actor,
         public readonly ?string $note = null,
     ) {
-        $this->connection = 'redis';
         $this->queue = config('inspection_requests.notification_queue');
     }
 

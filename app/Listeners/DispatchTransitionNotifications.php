@@ -12,7 +12,6 @@ use Illuminate\Events\Attributes\AsEventListener;
 #[AsEventListener(event: InspectionRequestTransitioned::class)]
 class DispatchTransitionNotifications implements ShouldQueue
 {
-    public string $connection = 'redis';
 
     public string $queue = 'notifications';
 

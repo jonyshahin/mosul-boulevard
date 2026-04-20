@@ -11,7 +11,6 @@ use Illuminate\Events\Attributes\AsEventListener;
 #[AsEventListener(event: RequestReplyCreated::class)]
 class DispatchReplyNotifications implements ShouldQueue
 {
-    public string $connection = 'redis';
 
     public string $queue = 'notifications';
 

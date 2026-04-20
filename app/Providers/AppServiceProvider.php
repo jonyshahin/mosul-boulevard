@@ -55,7 +55,7 @@ class AppServiceProvider extends ServiceProvider
     protected function registerNotificationChannels(): void
     {
         Notification::resolved(function (ChannelManager $manager): void {
-            $manager->extend('fcm', fn () => $this->app->make(FcmChannel::class));
+            $manager->extend('fcm', fn () => app(FcmChannel::class));
         });
     }
 }
