@@ -7,6 +7,7 @@ use App\Models\InspectionRequest;
 use App\Models\RequestReply;
 use App\Models\User;
 use Illuminate\Database\ConnectionInterface;
+use Illuminate\Http\UploadedFile;
 
 class RequestReplyService
 {
@@ -18,7 +19,7 @@ class RequestReplyService
 
     /**
      * @param  array<string, mixed>  $data
-     * @param  array<int, \Illuminate\Http\UploadedFile>  $uploadedFiles
+     * @param  array<int, UploadedFile>  $uploadedFiles
      */
     public function create(
         InspectionRequest $request,

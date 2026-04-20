@@ -10,6 +10,7 @@ use App\Models\User;
 use App\Models\Villa;
 use Illuminate\Database\ConnectionInterface;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\UploadedFile;
 use InvalidArgumentException;
 
 class InspectionRequestService
@@ -27,7 +28,7 @@ class InspectionRequestService
 
     /**
      * @param  array<string, mixed>  $data
-     * @param  array<int, \Illuminate\Http\UploadedFile>  $uploadedFiles
+     * @param  array<int, UploadedFile>  $uploadedFiles
      */
     public function create(array $data, User $author, array $uploadedFiles = []): InspectionRequest
     {

@@ -16,6 +16,7 @@ use App\Models\TowerUnit;
 use App\Models\User;
 use App\Models\Villa;
 use App\Services\InspectionRequestService;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -191,7 +192,7 @@ class InspectionRequestController extends Controller
     }
 
     /**
-     * @param  \Illuminate\Database\Eloquent\Builder<InspectionRequest>  $query
+     * @param  Builder<InspectionRequest>  $query
      */
     private function applyFilters($query, Request $request): void
     {
@@ -242,7 +243,7 @@ class InspectionRequestController extends Controller
     }
 
     /**
-     * @param  \Illuminate\Database\Eloquent\Builder<InspectionRequest>  $query
+     * @param  Builder<InspectionRequest>  $query
      */
     private function applySort($query, Request $request): void
     {
