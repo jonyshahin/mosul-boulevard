@@ -2,9 +2,12 @@
 
 namespace App\Providers;
 
+use App\Notifications\Channels\FcmChannel;
 use Carbon\CarbonImmutable;
+use Illuminate\Notifications\ChannelManager;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Validation\Rules\Password;
 
@@ -24,6 +27,7 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $this->configureDefaults();
+        $this->registerNotificationChannels();
     }
 
     /**
@@ -46,5 +50,12 @@ class AppServiceProvider extends ServiceProvider
                 ->uncompromised()
             : null,
         );
+    }
+
+    protected function registerNotificationChannels(): void
+    {
+        Notification::resolved(function (ChannelManager $manager): void {
+            $manager->extend('fcm', fn () => app(FcmChannel::class));
+        });
     }
 }
