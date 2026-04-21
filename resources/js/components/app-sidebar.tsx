@@ -1,5 +1,19 @@
-import { Link } from '@inertiajs/react';
-import { BarChart3, Building, Building2, Home, LayoutGrid, Mail, Settings, Settings2, UserCog, Users } from 'lucide-react';
+import { Link, usePage } from '@inertiajs/react';
+import {
+    BarChart3,
+    Bell,
+    Building,
+    Building2,
+    ClipboardList,
+    Home,
+    LayoutGrid,
+    Mail,
+    Settings,
+    Settings2,
+    Tag,
+    UserCog,
+    Users,
+} from 'lucide-react';
 import AppLogo from '@/components/app-logo';
 import { NavFooter } from '@/components/nav-footer';
 import { NavMain } from '@/components/nav-main';
@@ -14,8 +28,11 @@ import {
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
 import type { NavItem } from '@/types';
+import type { UserRole } from '@/types/auth';
 
-const mainNavItems: NavItem[] = [
+type NavItemWithRoles = NavItem & { roles?: UserRole[] };
+
+const mainNavItems: NavItemWithRoles[] = [
     {
         title: 'Dashboard',
         href: '/dashboard',
@@ -42,6 +59,12 @@ const mainNavItems: NavItem[] = [
         icon: Building,
     },
     {
+        title: 'Inspections',
+        href: '/dashboard/inspection-requests',
+        icon: ClipboardList,
+        roles: ['admin', 'engineer', 'viewer'],
+    },
+    {
         title: 'Reports',
         href: '/dashboard/reports',
         icon: BarChart3,
@@ -61,6 +84,18 @@ const mainNavItems: NavItem[] = [
         href: '/dashboard/settings',
         icon: Settings2,
     },
+    {
+        title: 'Request Types',
+        href: '/dashboard/settings/request-types',
+        icon: Tag,
+        roles: ['admin'],
+    },
+    {
+        title: 'Notification Rules',
+        href: '/dashboard/settings/notification-recipient-rules',
+        icon: Bell,
+        roles: ['admin'],
+    },
 ];
 
 const footerNavItems: NavItem[] = [
@@ -72,6 +107,17 @@ const footerNavItems: NavItem[] = [
 ];
 
 export function AppSidebar() {
+    const page = usePage();
+    const user = (page.props as { auth?: { user?: { role?: UserRole } } }).auth?.user;
+    const role = user?.role;
+
+    const visibleItems = mainNavItems.filter((item) => {
+        if (!item.roles) {
+            return true;
+        }
+        return role !== undefined && item.roles.includes(role);
+    });
+
     return (
         <Sidebar collapsible="icon" variant="inset">
             <SidebarHeader>
@@ -87,7 +133,7 @@ export function AppSidebar() {
             </SidebarHeader>
 
             <SidebarContent>
-                <NavMain items={mainNavItems} />
+                <NavMain items={visibleItems} />
             </SidebarContent>
 
             <SidebarFooter>

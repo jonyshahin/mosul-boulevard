@@ -3,7 +3,10 @@
 use App\Http\Controllers\Dashboard\ContactMessageController;
 use App\Http\Controllers\Dashboard\CustomerController;
 use App\Http\Controllers\Dashboard\DashboardController;
+use App\Http\Controllers\Dashboard\InspectionRequestsPageController;
+use App\Http\Controllers\Dashboard\NotificationRecipientRulesPageController;
 use App\Http\Controllers\Dashboard\ReportController;
+use App\Http\Controllers\Dashboard\RequestTypesPageController;
 use App\Http\Controllers\Dashboard\SettingController;
 use App\Http\Controllers\Dashboard\SetupController;
 use App\Http\Controllers\Dashboard\TowerUnitController;
@@ -27,6 +30,20 @@ Route::middleware(['web', 'auth'])->prefix('dashboard')->name('dashboard.')->gro
 
     Route::get('settings', [SettingController::class, 'index'])->name('settings.index');
     Route::put('settings', [SettingController::class, 'update'])->name('settings.update');
+
+    Route::prefix('settings')->name('settings.')->group(function () {
+        Route::get('request-types', [RequestTypesPageController::class, 'index'])
+            ->name('request-types.index');
+        Route::get('notification-recipient-rules', [NotificationRecipientRulesPageController::class, 'index'])
+            ->name('notification-recipient-rules.index');
+    });
+
+    Route::prefix('inspection-requests')->name('inspection-requests.')->group(function () {
+        Route::get('/', [InspectionRequestsPageController::class, 'index'])->name('index');
+        Route::get('/create', [InspectionRequestsPageController::class, 'create'])->name('create');
+        Route::get('/{id}', [InspectionRequestsPageController::class, 'show'])->whereNumber('id')->name('show');
+        Route::get('/{id}/edit', [InspectionRequestsPageController::class, 'edit'])->whereNumber('id')->name('edit');
+    });
 
     Route::resource('messages', ContactMessageController::class)->only(['index', 'show', 'destroy'])->parameters(['messages' => 'contactMessage']);
     Route::post('messages/{contactMessage}/reply', [ContactMessageController::class, 'reply'])->name('messages.reply');
