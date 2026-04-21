@@ -43,6 +43,12 @@ Route::middleware(['web', 'auth'])->prefix('dashboard')->name('dashboard.')->gro
         Route::get('/create', [InspectionRequestsPageController::class, 'create'])->name('create');
         Route::get('/{id}', [InspectionRequestsPageController::class, 'show'])->whereNumber('id')->name('show');
         Route::get('/{id}/edit', [InspectionRequestsPageController::class, 'edit'])->whereNumber('id')->name('edit');
+        Route::post('/{inspection_request}/replies', [InspectionRequestsPageController::class, 'storeReply'])
+            ->whereNumber('inspection_request')
+            ->name('replies.store');
+        Route::post('/{inspection_request}/transition', [InspectionRequestsPageController::class, 'transition'])
+            ->whereNumber('inspection_request')
+            ->name('transition');
     });
 
     Route::resource('messages', ContactMessageController::class)->only(['index', 'show', 'destroy'])->parameters(['messages' => 'contactMessage']);

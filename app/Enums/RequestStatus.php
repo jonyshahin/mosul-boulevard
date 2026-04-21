@@ -48,6 +48,17 @@ enum RequestStatus: string
     }
 
     /**
+     * @return array<int, self>
+     */
+    public function canTransitionToList(): array
+    {
+        return array_map(
+            static fn (string $value): self => self::from($value),
+            self::validTransitions()[$this->value] ?? [],
+        );
+    }
+
+    /**
      * @return array<string, array<int, string>>
      */
     public static function validTransitions(): array

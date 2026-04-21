@@ -17,7 +17,9 @@ class RequestReplyResource extends JsonResource
             'id' => $this->id,
             'body' => $this->body,
             'triggers_status' => $this->formatTriggers(),
-            'author' => new UserResource($this->whenLoaded('author')),
+            'author' => $this->relationLoaded('author') && $this->author
+                ? (new UserResource($this->author))->resolve($request)
+                : null,
             'media' => RequestMediaResource::collection($this->whenLoaded('media')),
             'created_at' => $this->created_at,
         ];
