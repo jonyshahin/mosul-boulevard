@@ -39,4 +39,28 @@ return [
         'line_type' => 'Type: :type',
         'line_severity' => 'Severity: :severity',
     ],
+
+    'nav' => [
+        'label' => 'Inspections',
+    ],
+
+    'pages' => [
+        'coming_soon' => 'Coming soon — this page is being built.',
+
+        'index' => [
+            'title' => 'Inspection Requests',
+        ],
+
+        'create' => [
+            'title' => 'New Inspection Request',
+        ],
+
+        'show' => [
+            'title' => 'Inspection Request #:id',
+        ],
+
+        'edit' => [
+            'title' => 'Edit Inspection Request',
+        ],
+    ],
 ];
