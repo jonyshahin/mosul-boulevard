@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('notes', 500)->nullable();
             $table->timestamps();
 
-            $table->index(['request_type_id', 'severity', 'is_active']);
+            $table->index(['request_type_id', 'severity', 'is_active'], 'nrr_lookup_idx');
             $table->unique(['request_type_id', 'severity', 'recipient_user_id'], 'nrr_unique');
         });
     }
