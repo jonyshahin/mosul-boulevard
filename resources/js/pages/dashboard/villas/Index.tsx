@@ -19,7 +19,7 @@ import {
     TableRow,
 } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
-import { Building2, ChevronLeft, ChevronRight, Plus, Search } from 'lucide-react';
+import { Building2, ChevronLeft, ChevronRight, Plus, Search, Trash2 } from 'lucide-react';
 
 interface Villa {
     id: number;
@@ -121,12 +121,20 @@ export default function VillasIndex({
                             {villas.total}
                         </Badge>
                     </div>
-                    <Button asChild className="bg-mbp-gold hover:bg-mbp-gold/90">
-                        <Link href="/dashboard/villas/create">
-                            <Plus className="mr-1 h-4 w-4" />
-                            New Villa
-                        </Link>
-                    </Button>
+                    <div className="flex items-center gap-2">
+                        <Button asChild variant="outline">
+                            <Link href="/dashboard/villas/trashed">
+                                <Trash2 className="mr-1 h-4 w-4" />
+                                Deleted Villas
+                            </Link>
+                        </Button>
+                        <Button asChild className="bg-mbp-gold hover:bg-mbp-gold/90">
+                            <Link href="/dashboard/villas/create">
+                                <Plus className="mr-1 h-4 w-4" />
+                                New Villa
+                            </Link>
+                        </Button>
+                    </div>
                 </div>
 
                 {/* Filters */}

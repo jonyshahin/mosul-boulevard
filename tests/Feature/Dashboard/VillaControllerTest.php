@@ -150,8 +150,54 @@ test('duplicate code against a deleted villa explains how to resolve it', functi
     ]);
 
     $response->assertSessionHasErrors([
-        'code' => 'This code belongs to a deleted villa. Restore that villa, or use a different code.',
+        'code' => 'This code belongs to a deleted villa. Restore that villa from the deleted villas page, or use a different code.',
     ]);
+});
+
+test('trashed page lists only soft deleted villas', function () {
+    $type = VillaType::first();
+    $live = Villa::create(['code' => 'D-V-LIVE-001', 'villa_type_id' => $type->id]);
+    $deleted = Villa::create(['code' => 'D-V-GONE-001', 'villa_type_id' => $type->id]);
+    $deleted->delete();
+
+    $response = $this->get(route('dashboard.villas.trashed'));
+
+    $response->assertOk()
+        ->assertInertia(fn ($page) => $page
+            ->component('dashboard/villas/Trashed')
+            ->has('villas.data', 1)
+            ->where('villas.data.0.id', $deleted->id)
+            ->where('villas.data.0.code', 'D-V-GONE-001')
+        );
+
+    expect($live->fresh()->trashed())->toBeFalse();
+});
+
+test('restore brings a soft deleted villa back and redirects to show', function () {
+    $type = VillaType::first();
+    $villa = Villa::create(['code' => 'D-V-RESTORE-001', 'villa_type_id' => $type->id]);
+    $villa->delete();
+
+    $response = $this->post(route('dashboard.villas.restore', $villa->id));
+
+    $response->assertRedirect(route('dashboard.villas.show', $villa));
+
+    expect($villa->fresh()->trashed())->toBeFalse();
+    $this->assertDatabaseHas('villas', ['id' => $villa->id, 'deleted_at' => null]);
+});
+
+test('restore 404s for a villa that is not deleted', function () {
+    $type = VillaType::first();
+    $villa = Villa::create(['code' => 'D-V-LIVE-002', 'villa_type_id' => $type->id]);
+
+    $this->post(route('dashboard.villas.restore', $villa->id))->assertNotFound();
+});
+
+test('villas trashed route is not swallowed by the show route', function () {
+    $response = $this->get('/dashboard/villas/trashed');
+
+    $response->assertOk()
+        ->assertInertia(fn ($page) => $page->component('dashboard/villas/Trashed'));
 });
 
 test('duplicate code against a live villa keeps the default message', function () {
