@@ -42,6 +42,75 @@ test('store creates villa and redirects to show', function () {
     $this->assertDatabaseHas('villas', ['code' => 'D-NEW-001']);
 });
 
+/**
+ * Mirrors preparePayload() in resources/js/pages/dashboard/villas/Create.tsx:
+ * every optional field is sent as an explicit null when left blank.
+ *
+ * @return array<string, mixed>
+ */
+function blankVillaFormPayload(string $code, int $villaTypeId): array
+{
+    return [
+        'code' => $code,
+        'villa_type_id' => $villaTypeId,
+        'is_sold' => false,
+        'customer_id' => null,
+        'customer_name' => null,
+        'sale_date' => null,
+        'engineer_id' => null,
+        'current_stage_id' => null,
+        'status_option_id' => null,
+        'structural_status_id' => null,
+        'finishing_status_id' => null,
+        'facade_status_id' => null,
+        'completion_pct' => null,
+        'planned_start' => null,
+        'planned_finish' => null,
+        'actual_start' => null,
+        'actual_finish' => null,
+        'acc_concrete_qty' => null,
+        'acc_steel_qty' => null,
+    ];
+}
+
+test('store accepts the form payload with every optional field left blank', function () {
+    $type = VillaType::first();
+
+    $response = $this->post(
+        route('dashboard.villas.store'),
+        blankVillaFormPayload('D-V-BLANK-001', $type->id)
+    );
+
+    $villa = Villa::where('code', 'D-V-BLANK-001')->first();
+
+    expect($villa)->not->toBeNull();
+    $response->assertRedirect(route('dashboard.villas.show', $villa));
+
+    // completion_pct / acc_concrete_qty / acc_steel_qty are NOT NULL DEFAULT 0,
+    // so a blank input has to land as 0 rather than null.
+    expect($villa->completion_pct)->toBe(0.0)
+        ->and($villa->acc_concrete_qty)->toBe(0.0)
+        ->and($villa->acc_steel_qty)->toBe(0.0);
+});
+
+test('update accepts the form payload with every optional field left blank', function () {
+    $type = VillaType::first();
+    $villa = Villa::create([
+        'code' => 'D-V-BLANK-002',
+        'villa_type_id' => $type->id,
+        'completion_pct' => 42,
+    ]);
+
+    $response = $this->put(
+        route('dashboard.villas.update', $villa),
+        blankVillaFormPayload('D-V-BLANK-002', $type->id)
+    );
+
+    $response->assertRedirect(route('dashboard.villas.show', $villa));
+
+    expect($villa->fresh()->completion_pct)->toBe(0.0);
+});
+
 test('edit page loads with villa data', function () {
     $villaType = VillaType::first();
     $villa = Villa::create(['code' => 'D-EDIT-001', 'villa_type_id' => $villaType->id]);

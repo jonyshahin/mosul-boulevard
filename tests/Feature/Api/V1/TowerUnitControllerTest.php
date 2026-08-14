@@ -91,6 +91,29 @@ test('store creates a new tower unit', function () {
     $this->assertDatabaseHas('tower_units', ['code' => 'TU-NEW-001']);
 });
 
+test('store accepts explicit nulls for the progress fields', function () {
+    Sanctum::actingAs(User::factory()->create(['role' => 'admin']));
+
+    $tower = TowerDefinition::first();
+
+    $response = $this->postJson('/api/v1/tower-units', [
+        'code' => 'TU-NULL-001',
+        'tower_definition_id' => $tower->id,
+        'completion_pct' => null,
+        'acc_concrete_qty' => null,
+        'acc_steel_qty' => null,
+    ]);
+
+    $response->assertCreated();
+
+    $this->assertDatabaseHas('tower_units', [
+        'code' => 'TU-NULL-001',
+        'completion_pct' => 0,
+        'acc_concrete_qty' => 0,
+        'acc_steel_qty' => 0,
+    ]);
+});
+
 test('update modifies tower unit data', function () {
     Sanctum::actingAs(User::factory()->create(['role' => 'admin']));
 
