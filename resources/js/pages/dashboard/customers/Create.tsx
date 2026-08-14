@@ -3,6 +3,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import AppLayout from '@/layouts/app-layout';
+import ServerErrors from '@/components/server-errors';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -41,6 +42,7 @@ export default function CustomerCreate() {
         register,
         handleSubmit,
         setValue,
+        setError,
         watch,
         formState: { errors, isSubmitting },
     } = useForm<CustomerFormData>({
@@ -56,7 +58,18 @@ export default function CustomerCreate() {
     });
 
     function onSubmit(data: CustomerFormData) {
-        router.post('/dashboard/customers', preparePayload(data));
+        router.post('/dashboard/customers', preparePayload(data), {
+            // Keep what the user typed when the server rejects the submission.
+            preserveState: true,
+            onError: (serverErrors) => {
+                Object.entries(serverErrors).forEach(([field, message]) => {
+                    setError(field as keyof CustomerFormData, {
+                        type: 'server',
+                        message,
+                    });
+                });
+            },
+        });
     }
 
     return (
@@ -83,6 +96,8 @@ export default function CustomerCreate() {
                             <CardTitle>Create Customer</CardTitle>
                         </CardHeader>
                         <CardContent className="space-y-6">
+                            <ServerErrors title="This customer could not be created." />
+
                             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                                 {/* Name */}
                                 <div className="space-y-2">

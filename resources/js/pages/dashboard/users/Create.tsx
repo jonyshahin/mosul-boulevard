@@ -3,6 +3,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import AppLayout from '@/layouts/app-layout';
+import ServerErrors from '@/components/server-errors';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -59,6 +60,7 @@ export default function UserCreate({ roles }: CreateProps) {
         register,
         handleSubmit,
         setValue,
+        setError,
         watch,
         formState: { errors, isSubmitting },
     } = useForm<UserFormData>({
@@ -73,7 +75,18 @@ export default function UserCreate({ roles }: CreateProps) {
     });
 
     function onSubmit(data: UserFormData) {
-        router.post('/dashboard/users', preparePayload(data));
+        router.post('/dashboard/users', preparePayload(data), {
+            // Keep what the user typed when the server rejects the submission.
+            preserveState: true,
+            onError: (serverErrors) => {
+                Object.entries(serverErrors).forEach(([field, message]) => {
+                    setError(field as keyof UserFormData, {
+                        type: 'server',
+                        message,
+                    });
+                });
+            },
+        });
     }
 
     return (
@@ -100,6 +113,8 @@ export default function UserCreate({ roles }: CreateProps) {
                             <CardTitle>Create User</CardTitle>
                         </CardHeader>
                         <CardContent className="space-y-6">
+                            <ServerErrors title="This user could not be created." />
+
                             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                                 {/* Name */}
                                 <div className="space-y-2">
