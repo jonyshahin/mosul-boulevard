@@ -3,6 +3,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import AppLayout from '@/layouts/app-layout';
+import ServerErrors from '@/components/server-errors';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -131,6 +132,7 @@ export default function VillaCreate({
         register,
         handleSubmit,
         setValue,
+        setError,
         watch,
         formState: { errors, isSubmitting },
     } = useForm<VillaFormData>({
@@ -159,7 +161,18 @@ export default function VillaCreate({
     });
 
     function onSubmit(data: VillaFormData) {
-        router.post('/dashboard/villas', preparePayload(data));
+        router.post('/dashboard/villas', preparePayload(data), {
+            // Keep what the user typed when the server rejects the submission.
+            preserveState: true,
+            onError: (serverErrors) => {
+                Object.entries(serverErrors).forEach(([field, message]) => {
+                    setError(field as keyof VillaFormData, {
+                        type: 'server',
+                        message,
+                    });
+                });
+            },
+        });
     }
 
     return (
@@ -186,6 +199,8 @@ export default function VillaCreate({
                             <CardTitle>Create Villa</CardTitle>
                         </CardHeader>
                         <CardContent className="space-y-6">
+                            <ServerErrors title="This villa could not be created." />
+
                             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                                 {/* Code */}
                                 <div className="space-y-2">

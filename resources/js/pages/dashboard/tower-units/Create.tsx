@@ -17,6 +17,7 @@ import {
     SelectValue,
 } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
+import ServerErrors from '@/components/server-errors';
 import { ArrowLeft } from 'lucide-react';
 
 interface Option {
@@ -145,6 +146,7 @@ export default function TowerUnitCreate({
         register,
         handleSubmit,
         setValue,
+        setError,
         watch,
         formState: { errors, isSubmitting },
     } = useForm<TowerUnitFormData>({
@@ -181,7 +183,18 @@ export default function TowerUnitCreate({
     );
 
     function onSubmit(data: TowerUnitFormData) {
-        router.post('/dashboard/tower-units', preparePayload(data));
+        router.post('/dashboard/tower-units', preparePayload(data), {
+            // Keep what the user typed when the server rejects the submission.
+            preserveState: true,
+            onError: (serverErrors) => {
+                Object.entries(serverErrors).forEach(([field, message]) => {
+                    setError(field as keyof TowerUnitFormData, {
+                        type: 'server',
+                        message,
+                    });
+                });
+            },
+        });
     }
 
     return (
@@ -208,6 +221,8 @@ export default function TowerUnitCreate({
                             <CardTitle>Create Tower Unit</CardTitle>
                         </CardHeader>
                         <CardContent className="space-y-6">
+                            <ServerErrors title="This tower unit could not be created." />
+
                             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                                 {/* Code */}
                                 <div className="space-y-2">
