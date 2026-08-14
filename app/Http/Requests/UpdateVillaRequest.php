@@ -59,7 +59,7 @@ class UpdateVillaRequest extends FormRequest
         }
 
         return [
-            'code.unique' => 'This code belongs to a deleted villa. Restore that villa, or use a different code.',
+            'code.unique' => 'This code belongs to a deleted villa. Restore that villa from the deleted villas page, or use a different code.',
         ];
     }
 }

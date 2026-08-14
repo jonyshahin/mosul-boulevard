@@ -44,6 +44,33 @@ class VillaController extends Controller
         ]);
     }
 
+    /**
+     * Soft-deleted villas are invisible everywhere else, yet they keep reserving
+     * their code because the unique index and the unique rule both count them.
+     * This page is the only way to see them and put one back.
+     */
+    public function trashed(): Response
+    {
+        $villas = Villa::onlyTrashed()
+            ->with(['villaType', 'status'])
+            ->orderByDesc('deleted_at')
+            ->paginate(25);
+
+        return Inertia::render('dashboard/villas/Trashed', [
+            'villas' => $villas,
+        ]);
+    }
+
+    public function restore(int $id): RedirectResponse
+    {
+        $villa = Villa::onlyTrashed()->findOrFail($id);
+
+        $villa->restore();
+
+        return redirect()->route('dashboard.villas.show', $villa)
+            ->with('success', "Villa {$villa->code} restored successfully.");
+    }
+
     public function create(): Response
     {
         return Inertia::render('dashboard/villas/Create', $this->lookupData());
