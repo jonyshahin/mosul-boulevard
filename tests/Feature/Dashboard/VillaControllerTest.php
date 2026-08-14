@@ -139,6 +139,35 @@ test('update modifies villa and redirects to show', function () {
     ]);
 });
 
+test('duplicate code against a deleted villa explains how to resolve it', function () {
+    $type = VillaType::first();
+    $villa = Villa::create(['code' => 'D-V-MSG-001', 'villa_type_id' => $type->id]);
+    $villa->delete();
+
+    $response = $this->post(route('dashboard.villas.store'), [
+        'code' => 'D-V-MSG-001',
+        'villa_type_id' => $type->id,
+    ]);
+
+    $response->assertSessionHasErrors([
+        'code' => 'This code belongs to a deleted villa. Restore that villa, or use a different code.',
+    ]);
+});
+
+test('duplicate code against a live villa keeps the default message', function () {
+    $type = VillaType::first();
+    Villa::create(['code' => 'D-V-MSG-002', 'villa_type_id' => $type->id]);
+
+    $response = $this->post(route('dashboard.villas.store'), [
+        'code' => 'D-V-MSG-002',
+        'villa_type_id' => $type->id,
+    ]);
+
+    $response->assertSessionHasErrors([
+        'code' => 'The code has already been taken.',
+    ]);
+});
+
 test('destroy soft deletes villa and redirects to index', function () {
     $villaType = VillaType::first();
     $villa = Villa::create(['code' => 'D-DEL-001', 'villa_type_id' => $villaType->id]);

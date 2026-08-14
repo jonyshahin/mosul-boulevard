@@ -157,6 +157,95 @@ test('update modifies tower unit and redirects to show', function () {
     ]);
 });
 
+test('trashed page lists only soft deleted units', function () {
+    $tower = TowerDefinition::first();
+    $live = TowerUnit::create(['code' => 'D-TU-LIVE-001', 'tower_definition_id' => $tower->id]);
+    $deleted = TowerUnit::create(['code' => 'D-TU-GONE-001', 'tower_definition_id' => $tower->id]);
+    $deleted->delete();
+
+    $response = $this->get(route('dashboard.tower-units.trashed'));
+
+    $response->assertOk()
+        ->assertInertia(fn ($page) => $page
+            ->component('dashboard/tower-units/Trashed')
+            ->has('towerUnits.data', 1)
+            ->where('towerUnits.data.0.id', $deleted->id)
+            ->where('towerUnits.data.0.code', 'D-TU-GONE-001')
+        );
+
+    expect($live->fresh()->trashed())->toBeFalse();
+});
+
+test('restore brings a soft deleted unit back and redirects to show', function () {
+    $tower = TowerDefinition::first();
+    $unit = TowerUnit::create(['code' => 'D-TU-RESTORE-001', 'tower_definition_id' => $tower->id]);
+    $unit->delete();
+
+    $response = $this->post(route('dashboard.tower-units.restore', $unit->id));
+
+    $response->assertRedirect(route('dashboard.tower-units.show', $unit));
+
+    expect($unit->fresh()->trashed())->toBeFalse();
+    $this->assertDatabaseHas('tower_units', ['id' => $unit->id, 'deleted_at' => null]);
+});
+
+test('restore 404s for a unit that is not deleted', function () {
+    $tower = TowerDefinition::first();
+    $unit = TowerUnit::create(['code' => 'D-TU-LIVE-002', 'tower_definition_id' => $tower->id]);
+
+    $this->post(route('dashboard.tower-units.restore', $unit->id))->assertNotFound();
+});
+
+test('restoring a unit frees its code for reuse only after restore is undone', function () {
+    $tower = TowerDefinition::first();
+    $unit = TowerUnit::create(['code' => 'D-TU-DUP-001', 'tower_definition_id' => $tower->id]);
+    $unit->delete();
+
+    // A soft-deleted unit still reserves its code.
+    $this->post(route('dashboard.tower-units.store'), [
+        'code' => 'D-TU-DUP-001',
+        'tower_definition_id' => $tower->id,
+    ])->assertSessionHasErrors('code');
+
+    expect(TowerUnit::where('code', 'D-TU-DUP-001')->count())->toBe(0);
+});
+
+test('duplicate code against a deleted unit explains how to resolve it', function () {
+    $tower = TowerDefinition::first();
+    $unit = TowerUnit::create(['code' => 'D-TU-MSG-001', 'tower_definition_id' => $tower->id]);
+    $unit->delete();
+
+    $response = $this->post(route('dashboard.tower-units.store'), [
+        'code' => 'D-TU-MSG-001',
+        'tower_definition_id' => $tower->id,
+    ]);
+
+    $response->assertSessionHasErrors([
+        'code' => 'This code belongs to a deleted tower unit. Restore that unit from the deleted tower units page, or use a different code.',
+    ]);
+});
+
+test('duplicate code against a live unit keeps the default message', function () {
+    $tower = TowerDefinition::first();
+    TowerUnit::create(['code' => 'D-TU-MSG-002', 'tower_definition_id' => $tower->id]);
+
+    $response = $this->post(route('dashboard.tower-units.store'), [
+        'code' => 'D-TU-MSG-002',
+        'tower_definition_id' => $tower->id,
+    ]);
+
+    $response->assertSessionHasErrors([
+        'code' => 'The code has already been taken.',
+    ]);
+});
+
+test('trashed route is not swallowed by the show route', function () {
+    $response = $this->get('/dashboard/tower-units/trashed');
+
+    $response->assertOk()
+        ->assertInertia(fn ($page) => $page->component('dashboard/tower-units/Trashed'));
+});
+
 test('destroy soft deletes tower unit and redirects to index', function () {
     $tower = TowerDefinition::first();
     $unit = TowerUnit::create(['code' => 'D-TU-DEL-001', 'tower_definition_id' => $tower->id]);

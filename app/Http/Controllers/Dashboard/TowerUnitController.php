@@ -67,6 +67,33 @@ class TowerUnitController extends Controller
         ]);
     }
 
+    /**
+     * Soft-deleted units are invisible everywhere else, yet they keep reserving
+     * their code because the unique index and the unique rule both count them.
+     * This page is the only way to see them and put one back.
+     */
+    public function trashed(): Response
+    {
+        $towerUnits = TowerUnit::onlyTrashed()
+            ->with(['towerDefinition', 'floorDefinition', 'status'])
+            ->orderByDesc('deleted_at')
+            ->paginate(25);
+
+        return Inertia::render('dashboard/tower-units/Trashed', [
+            'towerUnits' => $towerUnits,
+        ]);
+    }
+
+    public function restore(int $id): RedirectResponse
+    {
+        $towerUnit = TowerUnit::onlyTrashed()->findOrFail($id);
+
+        $towerUnit->restore();
+
+        return redirect()->route('dashboard.tower-units.show', $towerUnit)
+            ->with('success', "Tower unit {$towerUnit->code} restored successfully.");
+    }
+
     public function create(): Response
     {
         return Inertia::render('dashboard/tower-units/Create', $this->lookupData());
