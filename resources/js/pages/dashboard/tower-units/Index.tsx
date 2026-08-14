@@ -19,7 +19,7 @@ import {
     TableRow,
 } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
-import { Building, ChevronLeft, ChevronRight, Plus, Search } from 'lucide-react';
+import { Building, ChevronLeft, ChevronRight, Plus, Search, Trash2 } from 'lucide-react';
 
 interface TowerUnit {
     id: number;
@@ -119,12 +119,20 @@ export default function TowerUnitsIndex({
                             {towerUnits.total}
                         </Badge>
                     </div>
-                    <Button asChild className="bg-mbp-blue hover:bg-mbp-blue/90">
-                        <Link href="/dashboard/tower-units/create">
-                            <Plus className="mr-1 h-4 w-4" />
-                            New Tower Unit
-                        </Link>
-                    </Button>
+                    <div className="flex items-center gap-2">
+                        <Button asChild variant="outline">
+                            <Link href="/dashboard/tower-units/trashed">
+                                <Trash2 className="mr-1 h-4 w-4" />
+                                Deleted Units
+                            </Link>
+                        </Button>
+                        <Button asChild className="bg-mbp-blue hover:bg-mbp-blue/90">
+                            <Link href="/dashboard/tower-units/create">
+                                <Plus className="mr-1 h-4 w-4" />
+                                New Tower Unit
+                            </Link>
+                        </Button>
+                    </div>
                 </div>
 
                 {/* Filters */}

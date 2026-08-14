@@ -2,12 +2,14 @@
 
 namespace App\Http\Requests;
 
+use App\Concerns\ExplainsTrashedCodeConflict;
 use App\Concerns\NormalizesProgressFields;
+use App\Models\TowerUnit;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StoreTowerUnitRequest extends FormRequest
 {
-    use NormalizesProgressFields;
+    use ExplainsTrashedCodeConflict, NormalizesProgressFields;
 
     public function authorize(): bool
     {
@@ -46,6 +48,20 @@ class StoreTowerUnitRequest extends FormRequest
             'finishing_status_id' => ['nullable', 'exists:status_options,id'],
             'facade_status_id' => ['nullable', 'exists:status_options,id'],
             'remarks' => ['nullable', 'string'],
+        ];
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    public function messages(): array
+    {
+        if (! $this->codeBelongsToTrashedRecord(TowerUnit::class)) {
+            return [];
+        }
+
+        return [
+            'code.unique' => 'This code belongs to a deleted tower unit. Restore that unit from the deleted tower units page, or use a different code.',
         ];
     }
 }

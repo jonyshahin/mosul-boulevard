@@ -19,6 +19,12 @@ Route::middleware(['web', 'auth'])->prefix('dashboard')->name('dashboard.')->gro
     Route::resource('users', UserController::class)->except(['show']);
     Route::resource('customers', CustomerController::class);
     Route::resource('villas', VillaController::class);
+    // Must be declared before the resource routes, otherwise `tower-units/{towerUnit}`
+    // matches "trashed" and the show route swallows it.
+    Route::get('tower-units/trashed', [TowerUnitController::class, 'trashed'])->name('tower-units.trashed');
+    Route::post('tower-units/{id}/restore', [TowerUnitController::class, 'restore'])
+        ->whereNumber('id')
+        ->name('tower-units.restore');
     Route::resource('tower-units', TowerUnitController::class)->parameters(['tower-units' => 'towerUnit']);
     Route::get('reports', [ReportController::class, 'index'])->name('reports.index');
 
