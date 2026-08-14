@@ -91,6 +91,29 @@ test('store creates a new villa', function () {
     $this->assertDatabaseHas('villas', ['code' => 'NEW-001']);
 });
 
+test('store accepts explicit nulls for the progress fields', function () {
+    Sanctum::actingAs(User::factory()->create(['role' => 'admin']));
+
+    $type = VillaType::first();
+
+    $response = $this->postJson('/api/v1/villas', [
+        'code' => 'V-NULL-001',
+        'villa_type_id' => $type->id,
+        'completion_pct' => null,
+        'acc_concrete_qty' => null,
+        'acc_steel_qty' => null,
+    ]);
+
+    $response->assertCreated();
+
+    $this->assertDatabaseHas('villas', [
+        'code' => 'V-NULL-001',
+        'completion_pct' => 0,
+        'acc_concrete_qty' => 0,
+        'acc_steel_qty' => 0,
+    ]);
+});
+
 test('update modifies villa data', function () {
     Sanctum::actingAs(User::factory()->create(['role' => 'admin']));
 
